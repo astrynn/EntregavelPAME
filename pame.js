@@ -20,7 +20,7 @@ class Pedido {
         this.dataPedido = dataPedido
     }
 }
-//criando a classe funcionario-
+//criando a classe funcionario
 class Funcionario {
     constructor(idUnico,nomeUsuario,cpf,email,senha) {
         //atributos da classe funcionario
@@ -96,7 +96,8 @@ class Sistema {
                                     //o funcionario consegue logar e entao o metodo funcionarioLogado() eh chamado para que ele possa mexer em sua conta
                                     console.log('Login completado com sucesso!');
                                     let conta = new Sistema();
-                                    console.log(conta.funcionarioLogado());
+                                    let IDFunc = listaFuncionarios[i].idUnico; //sabe-se qual funcionario esta logando pelo id
+                                    console.log(conta.funcionarioLogado(IDFunc));
                                 }
                                 //se nao entrar no if de cima, entra no else e o loop continua
                                 else {
@@ -114,7 +115,7 @@ class Sistema {
                     }
                 }
             } 
-            ////parte do codigo para o login do cliente
+            //parte do codigo para o login do cliente
             //mesma linha de raciocionio para a parte do codigo do login do funcionario
             if (escolha == '2') {
                 //while para a verificacao se o email esta cadastrado
@@ -137,7 +138,8 @@ class Sistema {
                                     //o cliente consegue logar e entao o metodo clienteLogado() eh chamado para que ele possa mexer em sua conta
                                     console.log('Login completado com sucesso!');
                                     let conta = new Sistema();
-                                    console.log(conta.clienteLogado());
+                                    let IDCliente = listaClientes[i].idUnico; //sabe-se qual cliente esta logando pelo id
+                                    console.log(conta.ClienteLogado(IDCliente));
                                 }
                                 //se nao entrar no if de cima, entra no else e o loop continua
                                 else {
@@ -157,11 +159,121 @@ class Sistema {
             break //break para finalizar o primeiro loop
         } 
     }
-    //metodo para tanto o cliente quanto o funcionario verem seus dados
-    verDadosFunc() {
+    //metodo para o funcionario ver seus dados, que tem como argumento o id do funcionario logado
+    verDadosFunc(id) {
+        for (let funcionario of listaFuncionarios) {
 
-        console.log(`ID: ${id} \nNome: \nCPF: \nEmail: \nSenha: \n`)
+            if (funcionario.idUnico == id){
 
+                console.log(`ID: ${funcionario.idUnico} \nNome: ${funcionario.nomeUsuario} \nCPF: ${funcionario.cpf} \nEmail: ${funcionario.email} \nSenha: ${funcionario.senha}\n`);
+            }
+        }
+    }
+    verDadosCliente(id) {
+        for (let cliente of listaClientes) {
+
+            if (cliente.idUnico == id){
+
+                console.log(`ID: ${cliente.idUnico} \nNome: ${cliente.nome} \nData de Nascimento: ${cliente.dataNascimento} \nCPF: ${cliente.cpf} \nEmail: ${cliente.email} \nSenha: ${cliente.senha}\n`);
+            }
+        }
+    }
+
+    verListaProdutos() {
+        listaProdutos.sort((a, b) => a.nome.localeCompare(b.nome)); //deixa em ordem alfabetica de acordo com o nome do produto
+        for (let produto of listaProdutos) {
+
+        console.log(`Data de Validade: ${produto.validade} \nNome do Produto: ${produto.nome} \nQuantidade no Estoque: ${produto.qtdEstoque} \nPreco: ${produto.preco} \nDescricao: ${produto.descricao}\n`);
+        console.log();
+        }
+    }
+    verListaClientes() {
+        listaClientes.sort((a, b) => a.nome.localeCompare(b.nome)); //deixa em ordem alfabetica de acordo com o nome do cliente
+        for (let cliente of listaClientes) {
+
+            console.log(`ID: ${cliente.idUnico} \nNome: ${cliente.nome} \nData de Nascimento: ${cliente.dataNascimento} \nCPF: ${cliente.cpf} \nEmail: ${cliente.email} \nSenha: ${cliente.senha}\n`);
+        }
+    }
+    modificarDadosFunc(id){
+
+        for (let funcionario of listaFuncionarios) {
+
+            if (funcionario.idUnico == id){
+
+                while (true) {
+                    let escolha = input.question(`Deseja alterar o Nome? O atual eh ${funcionario.nomeUsuario} (s/n): `);
+                    if (escolha == 's') {
+
+                        let novoNome = input.question('Digite o nome: ') 
+                        funcionario.nomeUsuario = novoNome;
+                        break
+                    }
+                    if (escolha != 's' && escolha != 'n') {
+                        console.log('Digite uma opcao valida\n')
+                        continue
+                    } 
+                    break
+                }
+                while (true) {
+                    let escolha = input.question(`Deseja alterar o CPF? O atual eh ${funcionario.cpf} (s/n): `);
+                    if (escolha == 's') {
+                        var confirmacao = false
+                        while (confirmacao == false) {
+                            let novoCPF = input.question('Digite o CPF: ')
+                            for (let funcionarios of listaFuncionarios){
+                                if (funcionarios.cpf == novoCPF){
+                                    console.log('CPF ja cadastrado, tente novamente')
+                                }
+                                else {
+                                    confirmacao = true
+                                }
+                            }
+                        } 
+                    }
+                    if (escolha != 's' && escolha != 'n') {
+                        console.log('Digite uma opcao valida\n')
+                        continue
+                    } 
+                    break
+                }
+                while (true) {
+                    let escolha = input.question(`Deseja alterar o Email? O atual eh ${funcionario.email} (s/n): `);
+                    if (escolha == 's') {
+                        var confirmacao = false
+                        while (confirmacao == false) {
+                            let novoEmail = input.question('Digite o Email: ')
+                            for (let funcionarios of listaFuncionarios){
+                                if (funcionarios.Email == novoEmail){
+                                    console.log('Email ja cadastrado, tente novamente')
+                                }
+                                else {
+                                    confirmacao = true
+                                }
+                            }
+                        } 
+                    }
+                    if (escolha != 's' && escolha != 'n') {
+                        console.log('Digite uma opcao valida\n')
+                        continue
+                    } 
+                    break
+                }  
+                while (true) {
+                    let escolha = input.question(`Deseja alterar a Senha? A atual eh ${funcionario.senha} (s/n): `);
+                    if (escolha == 's') {
+
+                        let novaSenha = input.question('Digite a senha: ') 
+                        funcionario.senha = novaSenha;
+                        break
+                    }
+                    if (escolha != 's' && escolha != 'n') {
+                        console.log('Digite uma opcao valida\n')
+                        continue
+                    } 
+                    break
+                } 
+            }   
+        }     
     }
     adicionarProduto() {
         let validade = input.question('Digite a data de validade (xx/xx/xxxx): ');
@@ -175,7 +287,8 @@ class Sistema {
         console.log('Produto adicionado com sucesso!\n');
     }
     //metodo para o funcionario poder mexer na sua conta (ver dados, modificar dados,ver lista de pedidos, etc)
-    funcionarioLogado() {
+    //tem argumento o id do funcionario logado
+    funcionarioLogado(id) {
         //loop para manter o usuario no menu ate que ele digite uma opcao correta
         while (true){
             console.log('-------------- Sua conta (Funcionario) --------------\n');
@@ -198,13 +311,13 @@ class Sistema {
             if (escolha == '1') {
                 console.log('-------------- Seus Dados --------------\n');
                 let dadosFuncionario = new Sistema();
-                console.log(dadosFuncionario.verDadosFunc());
+                console.log(dadosFuncionario.verDadosFunc(id));
                 continue
             }
             if (escolha == '2') {
                 console.log('-------------- Modificar Dados --------------\n');
                 let modificarFuncionario = new Sistema();
-                console.log(modificarFuncionario.modificarDadosFunc());
+                console.log(modificarFuncionario.modificarDadosFunc(id));
                 continue
             }
             if (escolha == '3') {
@@ -222,7 +335,7 @@ class Sistema {
             if (escolha == '5') {
                 console.log('-------------- Lista de Clientes --------------\n');
                 let verClientes = new Sistema();
-                console.log(verProdutos.verListaClientes());
+                console.log(verClientes.verListaClientes());
                 continue
             }
             if (escolha == '6') {
@@ -256,7 +369,7 @@ class Sistema {
         }
     }
     //metodo para o cliente poder mexer na sua conta (ver dados, modificar dados,ver lista de pedidos, etc)
-    clienteLogado() {
+    clienteLogado(id) {
         //loop para manter o usuario no menu ate que ele digite uma opcao correta
         while (true){
             console.log('-------------- Sua conta (Cliente) --------------\n');
@@ -278,7 +391,7 @@ class Sistema {
             if (escolha == '1') {
                 console.log('-------------- Seus Dados --------------\n');
                 let dadosCliente = new Sistema();
-                console.log(dadosCliente.verDadosCliente());
+                console.log(dadosCliente.verDadosCliente(id));
                 continue
             }
             if (escolha == '2') {
@@ -393,6 +506,7 @@ var iniciarSistema = new Sistema()
 //codigo para o menu principal, aqui o usuario podera acessar todos os metodos ds classe sistema
 //loop para garantir que o usuario digite uma opcao correta
 while (true) {
+
     console.log('Escolha uma das opcoes: \n')
     console.log('1 - Fazer Login')
     console.log('2 - Fazer Cadastro')

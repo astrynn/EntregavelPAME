@@ -199,7 +199,6 @@ class Sistema {
                             for (let funcionarios of listaFuncionarios){ //passa pela lista de funcionarios e ve se o cpf existe ou nao
                                 if (funcionarios.cpf == novoCPF){ //se existir entra no if e volta para o inicio do loop
                                     console.log('CPF ja cadastrado, tente novamente');
-                                    break
                                 }
                                 else { //se nao existir, o loop pode acabar e o cpf eh substituido
                                     funcionario.cpf = novoCPF;
@@ -283,7 +282,6 @@ class Sistema {
                             for (let clientes of listaClientes){ //passa pela lista de clientes e ve se o cpf existe ou nao
                                 if (clientes.cpf == novoCPF){ //se existir entra no if e volta para o inicio do loop
                                     console.log('CPF ja cadastrado, tente novamente');
-                                    break
                                 }
                                 else { //se nao existir, o loop pode acabar e o cpf eh substituido
                                     cliente.cpf = novoCPF;
@@ -305,7 +303,7 @@ class Sistema {
                         while (confirmacao == false) {
                             let novoEmail = input.question('Digite o Email: ')
                             for (let clientes of listaClientes){
-                                if (clientes.Email == novoEmail){
+                                if (clientes.emailmail == novoEmail){
                                     console.log('Email ja cadastrado, tente novamente')
                                 }
                                 else {
@@ -661,8 +659,9 @@ class Sistema {
                             var nomeClienteAvaliando = cliente.nome; //pega o nome do cliente que esta avaliando o pedido
                         }
                     }
-                    while (true) {
-                        var avaliacaoInicial = input.question('Digite sua avaliação, de 1 a 5: ')
+                    var confirmacao2 = false;
+                    while (confirmacao2 == false) {
+                        var avaliacaoInicial = input.question('Digite sua avaliacao, de 1 a 5: ')
                         try {
                             if (isNaN(avaliacaoInicial)) { // avaliacao deve ser um numero
                             throw new Error();
@@ -672,28 +671,30 @@ class Sistema {
                             console.log('Digite apenas numeros')
                             continue
                         }
-                        if ( 1 > parseInt(avaliacaoInicial) > 5) { //avaliacao deve ser um numero entre 1 e 5
+                        if ( 1 > parseInt(avaliacaoInicial) || parseInt(avaliacaoInicial) > 5) { //avaliacao deve ser um numero entre 1 e 5
                             console.log('Digite um numero entre 1 (inclusive) e 5 (inclusive)')
                             continue
                         }
-                        while (true){    //caso o usuario queira escrever uma avaliacao ao inves de so dar um numero avaliativo
-                            var escolhaMaisAvaliacao = input.question('Deseja comentar sobre o pedido? s/n');
+                        let confirmacao = false
+                        while (confirmacao == false){    //caso o usuario queira escrever uma avaliacao ao inves de so dar um numero avaliativo
+                            var escolhaMaisAvaliacao = input.question('Deseja fazer algum comentario sobre o pedido? (s/n): ');
                             if (escolhaMaisAvaliacao != 's' && escolhaMaisAvaliacao != 'n') {
-                                console.log('Digite uma resposta valida')
+                                console.log('Digite uma resposta valida');
                                 continue
                             } 
                             else if(escolhaMaisAvaliacao == 's') { //pede para o usuario digitar caso ele queira
-                                var maisAvaliacao = input.question('Digite o comentario sobre o pedido: ');
-                                break    
+                                let maisAvaliacao = input.question('Digite o comentario sobre o pedido: ');  
+                                var avaliacaoFinalPedido = avaliacaoInicial + '. ' + maisAvaliacao;
+                                confirmacao = true;  
                             }
-                            else if(escolhaMaisAvaliacao == 'n'){ // se a resposta for nao, nao pede pra digitar
+                            else if(escolhaMaisAvaliacao == 'n'){ //se a resposta for nao, nao pede pra digitar
                                 var maisAvaliacao = '';
-                                break
+                                var avaliacaoFinalPedido = avaliacaoInicial + '. ' + maisAvaliacao;
+                                confirmacao = true;
                             }
-                        }
-                        let avaliacaoFinalPedido = avaliacaoInicial + '. ' + maisAvaliacao // concatenacao entre strings para juntar a avaliacao numerica + a avaliacao comentada
-                        listaAvaliacao.push(Avaliacao(nomeClienteAvaliando,idPedido,avaliacaoFinalPedido))
-                        break  
+                            listaAvaliacao.push(new Avaliacao(nomeClienteAvaliando,idPedido,avaliacaoFinalPedido))
+                        } 
+                        confirmacao2 = true; 
                     }
                 }
             }

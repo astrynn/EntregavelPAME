@@ -846,9 +846,8 @@ class Sistema {
             console.log();
             //este if garante que o usuario so consiga prosseguir se digitar a opcao correta
             if (escolha != '1' && escolha != '2' && escolha != '3') {
-        
                 console.log('Digite uma opcao valida.\n');
-                continue //caso entre aqui o usuario volta para o menu pro conta do continue
+                continue //caso entre aqui o usuario volta para o menu por conta do continue
             }
             //parte do codigo para o cadastro de funcionario
             if (escolha == '1') {
@@ -857,12 +856,89 @@ class Sistema {
                 
                 //variaveis que armazenam as informacoes perguntadas ao usuario
                 let nome = input.question('Digite o seu nome: ');
-                let cpf = input.question('Digite o seu CPF: ');
-                let email = input.question('Digite o seu email: ');
-                let senha = input.question('Digite a sua senha: ');
-
+                while (true) { //loop para garantir que o usuario digite o cpf corretamente e um cpf nao repetido
+                    var cpfFuncionario = input.question('Digite o seu CPF: ');
+                    //verifica se o CPF tem exatamente 11 digitos e se eh composto apenas por numeros
+                    if (!/^\d{11}$/.test(cpfFuncionario)) {
+                        console.log('O CPF deve ter exatamente 11 digitos e conter apenas numeros.');
+                        continue; //pede o CPF novamente
+                    }
+                    let confirmacao = false; //inicializa como falso
+                    //verifica se o CPF esta na lista de funcionários
+                    for (let funcionario of listaFuncionarios) {
+                        if (funcionario.cpf == cpfFuncionario) {
+                            console.log('Este CPF já está cadastrado como funcionario.');
+                            confirmacao = true;
+                            break; //sai do loop de funcionários
+                        }
+                    }
+                    //verifica se o CPF está na lista de clientes
+                    if (confirmacao == false) {
+                        for (let cliente of listaClientes) {
+                            if (cliente.cpf == cpfFuncionario) {
+                                console.log('Este CPF já está cadastrado como cliente.');
+                                confirmacao = true;
+                                break; //sai do loop de clientes
+                            }
+                        }
+                    }
+                    //se o CPF não está cadastrado, sai do loop
+                    if (confirmacao == false) {
+                        break;
+                    }
+                }
+                function validarEmail(email) {
+                    //verifica se o e-mail contém exatamente um arroba e se ha letras antes e depois do arroba
+                    let regex = /^[a-zA-Z]+@[a-zA-Z]+\.[a-zA-Z]+$/;
+                    let partes = email.split('@');
+                    //verifica se ha exatamente um arroba e se a estrutura esta correta
+                    if (partes.length !== 2 || !regex.test(email)) {
+                        return false;
+                    }
+                    return true;
+                }
+                while (true) { //loop para garantir que o usuário digite um e-mail válido e não cadastrado
+                    var emailFuncionario = input.question('Digite o seu e-mail: ');
+                    if (!validarEmail(emailFuncionario)) {
+                        console.log('Email invalido. O email deve conter pelo menos uma letra antes do arroba e uma letra seguido de ponto e outra letra depois do @ (Ex: a@a.a).');
+                        continue; //pede o e-mail novamente
+                    }
+                    let confirmacao = false; //inicializa como falso
+                    //verifica se o email está na lista de funcionários
+                    for (let funcionario of listaFuncionarios) {
+                        if (funcionario.email === emailFuncionario) {
+                            console.log('Este email ja esta cadastrado como funcionario.');
+                            confirmacao = true;
+                            break; // Sai do loop de funcionários
+                        }
+                    }
+                    //verifica se o email está na lista de clientes
+                    if (confirmacao == false) {
+                        for (let cliente of listaClientes) {
+                            if (cliente.email === cpfFuncionario) {
+                                console.log('Este email ja esta cadastrado como cliente.');
+                                confirmacao = true;
+                                break; //sai do loop de clientes
+                            }
+                        }
+                    }
+                    //se o e-mail não está cadastrado, sai do loop
+                    if (confirmacao == false) {
+                        break;
+                    }
+                }
+                while (true) { //loop para garantir que o usuário digite uma senha com pelo menos 6 dígitos
+                    var senhaFuncionario = input.question('Digite a sua senha: ');
+                    //verifica se a senha tem pelo menos 6 dígitos
+                    if (senhaFuncionario.length < 6) {
+                        console.log('A senha deve ter pelo menos 6 digitos.');
+                        continue; //pede a senha novamente
+                    }
+                    //se a senha eh valida, sai do loop
+                    break;
+                }
                 //armazenando os dadoas na listaFuncionario, assim essa lista se torna uma lista de objetos do tipo funcionario
-                listaFuncionarios.push(new Funcionario(idUnicoFunc.toString(), nome, cpf, email, senha));
+                listaFuncionarios.push(new Funcionario(idUnicoFunc.toString(), nome, cpfFuncionario, emailFuncionario, senhaFuncionario));
                 idUnicoFunc++; // alterando o id para o proximo funcionario
                 console.log('Cadastrado com sucesso!\n')
                 console.log('Voce foi redirecionado ao menu principal')
@@ -953,9 +1029,9 @@ class Sistema {
                     var emailCliente = input.question('Digite o seu e-mail: ');
                     if (!validarEmail(emailCliente)) {
                         console.log('Email invalido. O email deve conter pelo menos uma letra antes do arroba e uma letra seguido de ponto e outra letra depois do @ (Ex: a@a.a).');
-                        continue; // Pede o e-mail novamente
+                        continue; //pede o e-mail novamente
                     }
-                    let confirmacao = false; // Inicializa como falso
+                    let confirmacao = false; //inicializa como falso
                     //verifica se o email está na lista de funcionários
                     for (let funcionario of listaFuncionarios) {
                         if (funcionario.email === emailCliente) {
@@ -964,24 +1040,24 @@ class Sistema {
                             break; // Sai do loop de funcionários
                         }
                     }
-                    // Verifica se o e-mail está na lista de clientes
+                    //verifica se o email está na lista de clientes
                     if (confirmacao == false) {
                         for (let cliente of listaClientes) {
-                            if (cliente.email === email) {
+                            if (cliente.email === emailClientes) {
                                 console.log('Este email ja esta cadastrado como cliente.');
-                                emailCadastrado = true;
-                                break; // Sai do loop de clientes
+                                confirmacao = true;
+                                break; //sai do loop de clientes
                             }
                         }
                     }
-                    // Se o e-mail não está cadastrado, sai do loop
+                    //se o e-mail não está cadastrado, sai do loop
                     if (confirmacao == false) {
                         break;
                     }
                 }
                 while (true) { //loop para garantir que o usuário digite uma senha com pelo menos 6 dígitos
                     var senhaCliente = input.question('Digite a sua senha: ');
-                    // Verifica se a senha tem pelo menos 6 dígitos
+                    //verifica se a senha tem pelo menos 6 dígitos
                     if (senhaCliente.length < 6) {
                         console.log('A senha deve ter pelo menos 6 digitos.');
                         continue; //pede a senha novamente

@@ -561,12 +561,12 @@ class Sistema {
         while (confirmacaoStatus == false) {
             var escolhaIDstatus = input.question('Digite o ID do pedido que voce quer modificar o status: ');
             //verifica se o ID digitado esta na lista de pedidos, se estiver, entra no if e entao o status do pedido pode ser alterado
-            for (let i = 0; i < listaProdutos.length; i++) {
+            for (let i = 0; i < listaPedidos.length; i++) {
                 if (listaPedidos[i].idUnico == escolhaIDstatus) {
                     console.log('Pedido encontrado\n');
-                    confirmacaoAlteracao = true; //quando voltar para o inicio do while acima, o loop sera quebrado
+                    confirmacaoStatus = true; //quando voltar para o inicio do while acima, o loop sera quebrado
                     while (true) {
-                        let escolhaStatus = input.question('Digite o novo status do pedido (pedido pendente, adiado, realizado, cancelado: ')
+                        let escolhaStatus = input.question('Digite o novo status do pedido (pedido pendente, adiado, realizado, cancelado): ')
                         // pede para o usuario digitar o novo status e substitui na lista de pedidos
                         if (escolhaStatus != 'pedido pendente' && escolhaStatus != 'adiado' && escolhaStatus != 'realizado' && escolhaStatus != 'cancelado') {
                             console.log('Digite um status valido');
@@ -589,8 +589,8 @@ class Sistema {
                     }
                 }
             }
-            if (confirmacaoAlteracao == false){
-                console.log('Produto nao foi encontrado, digite novamente')
+            if (confirmacaoStatus == false){
+                console.log('Pedido nao foi encontrado, digite novamente')
             }
         }  
     }

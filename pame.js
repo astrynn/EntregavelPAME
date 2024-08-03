@@ -171,15 +171,17 @@ class Sistema {
     }
     //metodo para o funcionario ver seus dados, que tem como argumento o id do funcionario logado
     verDadosFunc(id) {
-        for (let funcionario of listaFuncionarios) {
+        for (let funcionario of listaFuncionarios) { 
+            //percorre a lista de funcionarios
+            if (funcionario.idUnico == id){ //quando o id do funcionario logado for encontrado na lista, entra no if e printa os dados
 
-            if (funcionario.idUnico == id){
-
-                console.log(`ID: ${funcionario.idUnico} \nNome: ${funcionario.nomeUsuario} \nCPF: ${funcionario.cpf} \nEmail: ${funcionario.email} \nSenha: ${funcionario.senha}\n`);
+                console.log(`ID: ${funcionario.idUnico} \nNome: ${funcionario.nomeUsuario} \nCPF: ${funcionario.cpf} \nEmail: ${funcionario.email} \n`);
             }
         }
     }
-    verDadosCliente(id) {
+    //metodo para o cliente ver seus dados, que tem como argumento o id do cliente logado
+    //mesma linha de raciocinio do metodo verDadosFunc
+    verDadosCliente(id) { 
         for (let cliente of listaClientes) {
 
             if (cliente.idUnico == id){
@@ -188,15 +190,17 @@ class Sistema {
             }
         }
     }
-
+    //metodo para ver a lista de produtos
     verListaProdutos() {
         listaProdutos.sort((a, b) => a.nome.localeCompare(b.nome)); //deixa em ordem alfabetica de acordo com o nome do produto
         for (let produto of listaProdutos) {
-
-        console.log(`Data de Validade: ${produto.validade} \nNome do Produto: ${produto.nome} \nQuantidade no Estoque: ${produto.qtdEstoque} \nPreco: ${produto.preco} \nDescricao: ${produto.descricao}\n`);
-        console.log();
+            //percorre a lista de produtos e printa cada dado dos produtos
+            console.log(`Data de Validade: ${produto.validade} \nNome do Produto: ${produto.nome} \nQuantidade no Estoque: ${produto.qtdEstoque} \nPreco: ${produto.preco} \nDescricao: ${produto.descricao}\n`);
+            console.log();
         }
     }
+    //metodo para ver a lista de clientes
+    //mesma linha de raciocinio do metodo verListaProdutos, mas com a lista de clientes
     verListaClientes() {
         listaClientes.sort((a, b) => a.nome.localeCompare(b.nome)); //deixa em ordem alfabetica de acordo com o nome do cliente
         for (let cliente of listaClientes) {
@@ -204,18 +208,19 @@ class Sistema {
             console.log(`ID: ${cliente.idUnico} \nNome: ${cliente.nome} \nData de Nascimento: ${cliente.dataNascimento} \nCPF: ${cliente.cpf} \nEmail: ${cliente.email} \nSenha: ${cliente.senha}\n`);
         }
     }
+    //metodo para modificar os dados do funcionario, que tem como argumento o id do funcionario logado
     modificarDadosFunc(id){
 
         for (let funcionario of listaFuncionarios) {
 
-            if (funcionario.idUnico == id){
+            if (funcionario.idUnico == id){ //percorre a lista de funcionarios e quando achar o id do funcionario logado, entra no if
 
-                while (true) {
+                while (true) { //loop para fazer com que o usuario escolha uma opcao correta
                     let escolha = input.question(`Deseja alterar o Nome? O atual eh ${funcionario.nomeUsuario} (s/n): `);
-                    if (escolha == 's') {
+                    if (escolha == 's') { 
 
                         let novoNome = input.question('Digite o nome: ') 
-                        funcionario.nomeUsuario = novoNome;
+                        funcionario.nomeUsuario = novoNome; //se a resposta for sim, pede para digitar o novo nome e substitui na lista
                         break
                     }
                     if (escolha != 's' && escolha != 'n') {
@@ -224,18 +229,20 @@ class Sistema {
                     } 
                     break
                 }
-                while (true) {
+                while (true) { //mesma linha de raciocinio do while acima, mas para o cpf
                     let escolha = input.question(`Deseja alterar o CPF? O atual eh ${funcionario.cpf} (s/n): `);
                     if (escolha == 's') {
-                        var confirmacao = false
+                        var confirmacao = false //variavel de condicao para o loop abaixo, que tem como objetivo fazer com que o ousuario digite um cpf ainda nao existente
                         while (confirmacao == false) {
-                            let novoCPF = input.question('Digite o CPF: ')
-                            for (let funcionarios of listaFuncionarios){
-                                if (funcionarios.cpf == novoCPF){
-                                    console.log('CPF ja cadastrado, tente novamente')
+                            let novoCPF = input.question('Digite o CPF: ');
+                            for (let funcionarios of listaFuncionarios){ //passa pela lista de funcionarios e ve se o cpf existe ou nao
+                                if (funcionarios.cpf == novoCPF){ //se existir entra no if e volta para o inicio do loop
+                                    console.log('CPF ja cadastrado, tente novamente');
+                                    break
                                 }
-                                else {
-                                    confirmacao = true
+                                else { //se nao existir, o loop pode acabar e o cpf eh substituido
+                                    funcionario.cpf = novoCPF;
+                                    confirmacao = true;
                                 }
                             }
                         } 
@@ -246,7 +253,7 @@ class Sistema {
                     } 
                     break
                 }
-                while (true) {
+                while (true) { //mesma linha de raciocinio para o bloco de codigos da alteracao do cpf. mas nesse caso para o email
                     let escolha = input.question(`Deseja alterar o Email? O atual eh ${funcionario.email} (s/n): `);
                     if (escolha == 's') {
                         var confirmacao = false
@@ -257,6 +264,7 @@ class Sistema {
                                     console.log('Email ja cadastrado, tente novamente')
                                 }
                                 else {
+                                    funcionario.email = novoEmail;
                                     confirmacao = true
                                 }
                             }
@@ -268,8 +276,8 @@ class Sistema {
                     } 
                     break
                 }  
-                while (true) {
-                    let escolha = input.question(`Deseja alterar a Senha? A atual eh ${funcionario.senha} (s/n): `);
+                while (true) { //mesma linha de raciocinio para o bloco de codigos de alteracao de nome, mas nesse caso para a alteracao da senha
+                    let escolha = input.question(`Deseja alterar a Senha? (s/n): `);
                     if (escolha == 's') {
 
                         let novaSenha = input.question('Digite a senha: ') 
@@ -284,6 +292,90 @@ class Sistema {
                 } 
             }   
         }     
+    }
+    //mesma linha de raciocinio para o metodo modificarDadosFunc
+    modificarDadosCliente(id){//metodo para modificar os dados do cliente, que tem como argumento o id do cliente logado
+        for (let cliente of listaClientes) {
+
+            if (cliente.idUnico == id){ //percorre a lista de clientes e quando achar o id do cliente logado, entra no if
+
+                while (true) { //loop para fazer com que o usuario escolha uma opcao correta
+                    let escolha = input.question(`Deseja alterar o Nome? O atual eh ${cliente.nome} (s/n): `);
+                    if (escolha == 's') { 
+
+                        let novoNome = input.question('Digite o nome: ') 
+                        cliente.nome = novoNome; //se a resposta for sim, pede para digitar o novo nome e substitui na lista
+                        break
+                    }
+                    if (escolha != 's' && escolha != 'n') {
+                        console.log('Digite uma opcao valida\n')
+                        continue
+                    } 
+                    break
+                }
+                while (true) { //mesma linha de raciocinio do while acima, mas para o cpf
+                    let escolha = input.question(`Deseja alterar o CPF? O atual eh ${cliente.cpf} (s/n): `);
+                    if (escolha == 's') {
+                        var confirmacao = false //variavel de condicao para o loop abaixo, que tem como objetivo fazer com que o usuario digite um cpf ainda nao existente
+                        while (confirmacao == false) {
+                            let novoCPF = input.question('Digite o CPF: ');
+                            for (let clientes of listaClientes){ //passa pela lista de clientes e ve se o cpf existe ou nao
+                                if (clientes.cpf == novoCPF){ //se existir entra no if e volta para o inicio do loop
+                                    console.log('CPF ja cadastrado, tente novamente');
+                                    break
+                                }
+                                else { //se nao existir, o loop pode acabar e o cpf eh substituido
+                                    cliente.cpf = novoCPF;
+                                    confirmacao = true;
+                                }
+                            }
+                        } 
+                    }
+                    if (escolha != 's' && escolha != 'n') {
+                        console.log('Digite uma opcao valida\n')
+                        continue
+                    } 
+                    break
+                }
+                while (true) { //mesma linha de raciocinio para o bloco de codigos da alteracao do cpf. mas nesse caso para o email
+                    let escolha = input.question(`Deseja alterar o Email? O atual eh ${cliente.email} (s/n): `);
+                    if (escolha == 's') {
+                        var confirmacao = false
+                        while (confirmacao == false) {
+                            let novoEmail = input.question('Digite o Email: ')
+                            for (let clientes of listaClientes){
+                                if (clientes.Email == novoEmail){
+                                    console.log('Email ja cadastrado, tente novamente')
+                                }
+                                else {
+                                    cliente.email = novoEmail;
+                                    confirmacao = true
+                                }
+                            }
+                        } 
+                    }
+                    if (escolha != 's' && escolha != 'n') {
+                        console.log('Digite uma opcao valida\n')
+                        continue
+                    } 
+                    break
+                }  
+                while (true) { //mesma linha de raciocinio para o bloco de codigos de alteracao de nome, mas nesse caso para a alteracao da senha
+                    let escolha = input.question(`Deseja alterar a Senha? (s/n): `);
+                    if (escolha == 's') {
+
+                        let novaSenha = input.question('Digite a senha: ') 
+                        cliente.senha = novaSenha;
+                        break
+                    }
+                    if (escolha != 's' && escolha != 'n') {
+                        console.log('Digite uma opcao valida\n')
+                        continue
+                    } 
+                    break
+                } 
+            }   
+        }
     }
     adicionarProduto() {
         let validade = input.question('Digite a data de validade (xx/xx/xxxx): ');
@@ -563,7 +655,7 @@ class Sistema {
                 if (Pedido.idUnico == idPedido){
                     if (Pedido.idCliente == id) {
                         if (Pedido.status != 'realizado') {
-                            console.log('O pedido ainda nao foi entregue, entao voce nao pode avaliar ainda');
+                            console.log('O pedido ainda nao foi entregue, entao voce nao pode avaliar');
                         }
                         else{
                             confirmacaoAvaliacao = true; //pedido existe e pode avaliar, loop acaba
@@ -571,7 +663,7 @@ class Sistema {
                     }
                 }
                 if (confirmacaoAvaliacao == false) {
-                console.log('Pedido nao encontrado, tente novamente'); //caso o id do pedido nao seja encontrado ou seja encontrado mas nao pertenca ao cliente
+                    console.log('Pedido nao encontrado, tente novamente'); //caso o id do pedido nao seja encontrado ou seja encontrado mas nao pertenca ao cliente
                 }
                 else if (confirmacaoAvaliacao == true){
                     for (let cliente of listaClientes) {
@@ -734,7 +826,7 @@ class Sistema {
             if (escolha == '2') {
                 console.log('-------------- Modificar Dados --------------\n');
                 let modificarCliente = new Sistema();
-                console.log(modificarCliente.modificarDadosCliente());
+                console.log(modificarCliente.modificarDadosCliente(id));
                 continue
             }
             if (escolha == '3') {

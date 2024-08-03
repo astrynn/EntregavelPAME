@@ -303,7 +303,7 @@ class Sistema {
                         while (confirmacao == false) {
                             let novoEmail = input.question('Digite o Email: ')
                             for (let clientes of listaClientes){
-                                if (clientes.emailmail == novoEmail){
+                                if (clientes.email == novoEmail){
                                     console.log('Email ja cadastrado, tente novamente')
                                 }
                                 else {
@@ -634,71 +634,56 @@ class Sistema {
     }
     //metodo para o cliente realizar a avaliacao do pedido, que tem como argumento o id do cliete logado
     avaliarPedido(id) {
-
-        var confirmacaoAvaliacao = false;
-        while (confirmacaoAvaliacao == false){
-            var idPedido = input.question('Digite o ID do pedido que voce quer avaliar: ')
-            for (var Pedido of listaPedidos) {//percorre a lista de pedidos
-                if (Pedido.idUnico == idPedido){//ve se o pedido esta na lista, se for entra no if
-                    if (Pedido.idCliente == id) {//ve se o pedido encontrado eh o do cliente logado, se sim, entra no if
-                        if (Pedido.status != 'realizado') { //ve o status do pedido, caso ele ainda nao tenha sido entregue, o cliente naoi pode avaliar, caso contrario pode
-                            console.log('O pedido ainda nao foi entregue');
-                        }
-                        else{
-                            confirmacaoAvaliacao = true; //pedido existe e pode avaliar, loop acaba
-                        }
-                    }
-                }
-                if (confirmacaoAvaliacao == false) { 
-                    console.log('Voce nao pode avaliar este pedido'); //caso o id do pedido nao seja encontrado ou seja encontrado mas nao pertenca ao cliente ou o status esteja inadequado
-                    break
-                }
-                else if (confirmacaoAvaliacao == true){ // caso o pedido possa ser avaliado, entra neste if
-                    for (let cliente of listaClientes) {
-                        if (cliente.idUnico == id){
-                            var nomeClienteAvaliando = cliente.nome; //pega o nome do cliente que esta avaliando o pedido
-                        }
-                    }
-                    var confirmacao2 = false;
-                    while (confirmacao2 == false) {
-                        var avaliacaoInicial = input.question('Digite sua avaliacao, de 1 a 5: ')
-                        try {
-                            if (isNaN(avaliacaoInicial)) { // avaliacao deve ser um numero
-                            throw new Error();
-                            }
-                        } 
-                        catch(erro) {
-                            console.log('Digite apenas numeros')
-                            continue
-                        }
-                        if ( 1 > parseInt(avaliacaoInicial) || parseInt(avaliacaoInicial) > 5) { //avaliacao deve ser um numero entre 1 e 5
-                            console.log('Digite um numero entre 1 (inclusive) e 5 (inclusive)')
-                            continue
-                        }
-                        let confirmacao = false
-                        while (confirmacao == false){    //caso o usuario queira escrever uma avaliacao ao inves de so dar um numero avaliativo
-                            var escolhaMaisAvaliacao = input.question('Deseja fazer algum comentario sobre o pedido? (s/n): ');
-                            if (escolhaMaisAvaliacao != 's' && escolhaMaisAvaliacao != 'n') {
-                                console.log('Digite uma resposta valida');
-                                continue
-                            } 
-                            else if(escolhaMaisAvaliacao == 's') { //pede para o usuario digitar caso ele queira
-                                let maisAvaliacao = input.question('Digite o comentario sobre o pedido: ');  
-                                var avaliacaoFinalPedido = avaliacaoInicial + '. ' + maisAvaliacao;
-                                confirmacao = true;  
-                            }
-                            else if(escolhaMaisAvaliacao == 'n'){ //se a resposta for nao, nao pede pra digitar
-                                var maisAvaliacao = '';
-                                var avaliacaoFinalPedido = avaliacaoInicial + '. ' + maisAvaliacao;
-                                confirmacao = true;
-                            }
-                            listaAvaliacao.push(new Avaliacao(nomeClienteAvaliando,idPedido,avaliacaoFinalPedido))
-                        } 
-                        confirmacao2 = true; 
-                    }
-                }
+        // loop para confirmar a avaliação
+        let confirmacaoAvaliacao = false;
+        while (!confirmacaoAvaliacao) {
+            let idPedido = input.question('Digite o ID do pedido que você quer avaliar: ');
+            // verifica se o pedido está na lista e se pertence ao cliente
+            let pedido = listaPedidos.find(p => p.idUnico === idPedido);
+            if (!pedido) {
+                console.log('Pedido não encontrado.');
+                continue;
             }
-        }   
+            if (pedido.idCliente != id) {
+                console.log('Este pedido não pertence a você.');
+                continue;
+            }
+            if (pedido.status != 'realizado') {
+                console.log('O pedido ainda não foi entregue.');
+                continue;
+            }
+            confirmacaoAvaliacao = true; // pedido pode ser avaliado
+            // encontra o cliente que esta avaliando
+            let cliente = listaClientes.find(c => c.idUnico === id);
+            let nomeClienteAvaliando = cliente ? cliente.nome : '';
+            // loop para obter a avaliação
+            let confirmacao2 = false;
+            while (!confirmacao2) {
+                let avaliacaoInicial = input.question('Digite sua avaliação, de 1 a 5: ');
+                if (isNaN(avaliacaoInicial) || parseInt(avaliacaoInicial) < 1 || parseInt(avaliacaoInicial) > 5) {
+                    console.log('Digite um número válido entre 1 e 5.');
+                    continue;
+                }
+                let avaliacaoNum = parseInt(avaliacaoInicial);
+                let comentario = '';
+                // loop para obter o comentário
+                let confirmacao = false;
+                while (!confirmacao) {
+                    let escolhaMaisAvaliacao = input.question('Deseja fazer algum comentário sobre o pedido? (s/n): ');
+                    if (escolhaMaisAvaliacao !== 's' && escolhaMaisAvaliacao !== 'n') {
+                        console.log('Digite uma resposta válida.');
+                        continue;
+                    }
+                    if (escolhaMaisAvaliacao === 's') {
+                        comentario = input.question('Digite o comentário sobre o pedido: ');
+                    }
+                    let avaliacaoFinalPedido = `${avaliacaoNum}. ${comentario}`;
+                    listaAvaliacao.push(new Avaliacao(nomeClienteAvaliando, idPedido, avaliacaoFinalPedido));
+                    confirmacao = true; // comentário adicionado, encerra o loop de comentário
+                }
+                confirmacao2 = true; // avaliação concluída, encerra o loop de avaliação
+            }
+        }
     }
     //metodo para o cliente visualizar as avaliacoes
     visualizarAvaliacao() {

@@ -911,7 +911,6 @@ class Sistema {
                 listaClientes.push(new Cliente(idUnicoCliente.toString(), nome, data, cpf, email, senha));
                 idUnicoCliente++;
                 console.log('Cadastrado com sucesso!\n')
-                console.log(listaClientes);
                 console.log('Voce foi redirecionado ao menu principal')
                 break
             }
@@ -944,14 +943,13 @@ while (true) {
 
         console.log('-------------- Fazer Login --------------\n');
         let login = new Sistema();
-        console.log(login.fazerLogin());
+        login.fazerLogin();
     }
     //parte do codigo para o usuario acessar o cadastro
     if (escolha == '2') {
 
         console.log('-------------- Fazer Cadastro --------------\n')
-        console.log(iniciarSistema.cadastrar());
-        console.log('oi')
+        iniciarSistema.cadastrar();
         continue
     }
     //parte do codigo para o usuario sair do programa

@@ -639,8 +639,8 @@ class Sistema {
         while (!confirmacaoAvaliacao) {
             let idPedido = input.question('Digite o ID do pedido que você quer avaliar: ');
             // verifica se o pedido está na lista e se pertence ao cliente
-            let pedido = listaPedidos.find(p => p.idUnico === idPedido);
-            if (!pedido) {
+            let pedido = listaPedidos.find(p => p.idUnico == idPedido);
+            if (pedido == false) {
                 console.log('Pedido não encontrado.');
                 continue;
             }
@@ -654,11 +654,11 @@ class Sistema {
             }
             confirmacaoAvaliacao = true; // pedido pode ser avaliado
             // encontra o cliente que esta avaliando
-            let cliente = listaClientes.find(c => c.idUnico === id);
+            let cliente = listaClientes.find(c => c.idUnico == id);
             let nomeClienteAvaliando = cliente ? cliente.nome : '';
             // loop para obter a avaliação
             let confirmacao2 = false;
-            while (!confirmacao2) {
+            while (confirmacao2 == false) {
                 let avaliacaoInicial = input.question('Digite sua avaliação, de 1 a 5: ');
                 if (isNaN(avaliacaoInicial) || parseInt(avaliacaoInicial) < 1 || parseInt(avaliacaoInicial) > 5) {
                     console.log('Digite um número válido entre 1 e 5.');
@@ -668,13 +668,13 @@ class Sistema {
                 let comentario = '';
                 // loop para obter o comentário
                 let confirmacao = false;
-                while (!confirmacao) {
+                while (confirmacao == false) {
                     let escolhaMaisAvaliacao = input.question('Deseja fazer algum comentário sobre o pedido? (s/n): ');
-                    if (escolhaMaisAvaliacao !== 's' && escolhaMaisAvaliacao !== 'n') {
+                    if (escolhaMaisAvaliacao != 's' && escolhaMaisAvaliacao != 'n') {
                         console.log('Digite uma resposta válida.');
                         continue;
                     }
-                    if (escolhaMaisAvaliacao === 's') {
+                    if (escolhaMaisAvaliacao == 's') {
                         comentario = input.question('Digite o comentário sobre o pedido: ');
                     }
                     let avaliacaoFinalPedido = `${avaliacaoNum}. ${comentario}`;
@@ -867,25 +867,132 @@ class Sistema {
                 console.log('Cadastrado com sucesso!\n')
                 console.log('Voce foi redirecionado ao menu principal')
                 break // quebra o loop
-
             }
             //parte do codigo para o cadastro de cliente
             //mesma linha de raciocionio da parte do codigo de cadastro de funcionario
             if (escolha == '2') {
-        
                 console.log('-------------- Cadastrar como Cliente --------------\n');
-
                 let nome = input.question('Digite o seu nome: ');
-                let data = input.question('Digite a sua data de nascimento: ');
-                let cpf = input.question('Digite o seu CPF: ');
-                let email = input.question('Digite o seu email: ');
-                let senha = input.question('Digite a sua senha: ');
-                
-                listaClientes.push(new Cliente(idUnicoCliente.toString(), nome, data, cpf, email, senha));
+                while (true) { //loop para garantir que o usuario digite o cpf corretamente e um cpf nao repetido
+                    var cpfCliente = input.question('Digite o seu CPF: ');
+                    //verifica se o CPF tem exatamente 11 digitos e se eh composto apenas por numeros
+                    if (!/^\d{11}$/.test(cpfCliente)) {
+                        console.log('O CPF deve ter exatamente 11 digitos e conter apenas numeros.');
+                        continue; //pede o CPF novamente
+                    }
+                    let confirmacao = false; //inicializa como falso
+                    //verifica se o CPF esta na lista de funcionários
+                    for (let funcionario of listaFuncionarios) {
+                        if (funcionario.cpf == cpfCliente) {
+                            console.log('Este CPF já está cadastrado como funcionario.');
+                            confirmacao = true;
+                            break; //sai do loop de funcionários
+                        }
+                    }
+                    //verifica se o CPF está na lista de clientes
+                    if (confirmacao == false) {
+                        for (let cliente of listaClientes) {
+                            if (cliente.cpf == cpfCliente) {
+                                console.log('Este CPF já está cadastrado como cliente.');
+                                confirmacao = true;
+                                break; //sai do loop de clientes
+                            }
+                        }
+                    }
+                    //se o CPF não está cadastrado, sai do loop
+                    if (confirmacao == false) {
+                        break;
+                    }
+                }
+                function validarData(data) {
+                    //expressao regular para verificar o formato DD/MM/YYYY
+                    let regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+                    if (!regex.test(data)) {
+                        return false; //formato invalido
+                    }
+                    //divide a data em dia, mes e ano
+                    let [dia, mes, ano] = data.split('/').map(Number);
+                    //verifica o ano
+                    if (ano >= 2024) {
+                        return false; //ano invalido
+                    }
+                    //verifica o mes
+                    if (mes < 1 || mes > 12) {
+                        return false; //mes invalido
+                    }
+                    // Verifica o dia
+                    if (dia < 1 || dia > 31) {
+                        return false; //dia invalido
+                    }
+                    //verifica se o dia eh valido para o mes especifico
+                    let diasNoMes = [31, (ano % 4 === 0 && (ano % 100 !== 0 || ano % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+                    if (dia > diasNoMes[mes - 1]) {
+                        return false; // Dia inválido para o mês
+                    }
+                    return true; //data valida
+                }
+                while (true) { // Loop para garantir que o usuário digite uma data de nascimento válida
+                    var dataNascimento = input.question('Digite a sua data de nascimento (DD/MM/YYYY): ');
+                    if (validarData(dataNascimento)) {
+                        break; //sai do loop se a data for valida
+                    } else {
+                        console.log('Data invalida. Certifique-se de usar o formato DD/MM/YYYY e que a data seja válida.');
+                    }
+                }
+                function validarEmail(email) {
+                    //verifica se o e-mail contém exatamente um arroba e se ha letras antes e depois do arroba
+                    let regex = /^[a-zA-Z]+@[a-zA-Z]+\.[a-zA-Z]+$/;
+                    let partes = email.split('@');
+                    //verifica se ha exatamente um arroba e se a estrutura esta correta
+                    if (partes.length !== 2 || !regex.test(email)) {
+                        return false;
+                    }
+                    return true;
+                }
+                while (true) { //loop para garantir que o usuário digite um e-mail válido e não cadastrado
+                    var emailCliente = input.question('Digite o seu e-mail: ');
+                    if (!validarEmail(emailCliente)) {
+                        console.log('Email invalido. O email deve conter pelo menos uma letra antes do arroba e uma letra seguido de ponto e outra letra depois do @ (Ex: a@a.a).');
+                        continue; // Pede o e-mail novamente
+                    }
+                    let confirmacao = false; // Inicializa como falso
+                    //verifica se o email está na lista de funcionários
+                    for (let funcionario of listaFuncionarios) {
+                        if (funcionario.email === emailCliente) {
+                            console.log('Este email ja esta cadastrado como funcionario.');
+                            confirmacao = true;
+                            break; // Sai do loop de funcionários
+                        }
+                    }
+                    // Verifica se o e-mail está na lista de clientes
+                    if (confirmacao == false) {
+                        for (let cliente of listaClientes) {
+                            if (cliente.email === email) {
+                                console.log('Este email ja esta cadastrado como cliente.');
+                                emailCadastrado = true;
+                                break; // Sai do loop de clientes
+                            }
+                        }
+                    }
+                    // Se o e-mail não está cadastrado, sai do loop
+                    if (confirmacao == false) {
+                        break;
+                    }
+                }
+                while (true) { //loop para garantir que o usuário digite uma senha com pelo menos 6 dígitos
+                    var senhaCliente = input.question('Digite a sua senha: ');
+                    // Verifica se a senha tem pelo menos 6 dígitos
+                    if (senhaCliente.length < 6) {
+                        console.log('A senha deve ter pelo menos 6 digitos.');
+                        continue; //pede a senha novamente
+                    }
+                    //se a senha eh valida, sai do loop
+                    break;
+                }
+                listaClientes.push(new Cliente(idUnicoCliente.toString(), nome, dataNascimento, cpfCliente, emailCliente, senhaCliente));
                 idUnicoCliente++;
-                console.log('Cadastrado com sucesso!\n')
-                console.log('Voce foi redirecionado ao menu principal')
-                break
+                console.log('Cadastrado com sucesso!')
+                console.log('Voce foi redirecionado ao menu\n')
             }
             if (escolha == '3') {
                 break

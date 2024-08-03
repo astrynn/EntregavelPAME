@@ -68,6 +68,7 @@ class Sistema {
     }
     //criando o metodo para o usuario fazer login
     fazerLogin() {
+        var iniciarSistema = new Sistema();
         var confirmacaoLoginEmail = false
         //while para a verificacao se o email esta cadastrado
         while (confirmacaoLoginEmail == false){
@@ -85,10 +86,9 @@ class Sistema {
                         if (listaFuncionarios[i].senha == senha) {
                             //o funcionario consegue logar e entao o metodo funcionarioLogado() eh chamado para que ele possa mexer em sua conta
                             console.log('Login completado com sucesso!');
-                            let conta = new Sistema();
                             confirmacaoLoginEmail = true;
                             let IDFunc = listaFuncionarios[i].idUnico; //sabe-se qual funcionario esta logando pelo id
-                            console.log(conta.funcionarioLogado(IDFunc));
+                            iniciarSistema.funcionarioLogado(IDFunc);
                         }
                         //se nao entrar no if de cima, entra no else e o loop continua
                         else {
@@ -109,10 +109,9 @@ class Sistema {
                         if (listaClientes[i].senha == senha) {
                             //o cliente consegue logar e entao o metodo clienteLogado() eh chamado para que ele possa mexer em sua conta
                             console.log('Login completado com sucesso!');
-                            let conta = new Sistema();
                             confirmacaoLoginEmail = true;
                             let IDcliente = listaClientes[i].idUnico; //sabe-se qual cliente esta logando pelo id
-                            console.log(conta.clienteLogado(IDcliente));
+                            iniciarSistema.clienteLogado(IDcliente);
                         }
                         //se nao entrar no if de cima, entra no else e o loop continua
                         else {
@@ -532,8 +531,8 @@ class Sistema {
                     confirmacao = true
                     let hoje = new Date(); //pega a data de hoje (data do pedido)
                     listaPedidos.push(new Pedido(idUnicoPedido.toString(), IDcliente,'Pedido pendente', hoje));
-                    idUnicoPedido++
                     console.log(`Aqui esta o ID do seu pedido: ${idUnicoPedido}`); //da o id do pedido para o cliente
+                    idUnicoPedido++;
                     break
                 }
             }
@@ -552,7 +551,7 @@ class Sistema {
           });
         for (let pedido of listaPedidos) { //para cada pedido, printa a informacao para o usuario
 
-        console.log(`ID: ${pedido.idUnico} \nID do Cliente: ${pedido.idCliente} \nStatus do Pedido: ${pedido.status} \nPreco: ${pedido.dataPedido.toLocaleDateString('pt-BR')} \nDescricao: ${pedido.descricao}\n`);
+        console.log(`ID: ${pedido.idUnico} \nID do Cliente: ${pedido.idCliente} \nStatus do Pedido: ${pedido.status} \nData do Pedido: ${pedido.dataPedido.toLocaleDateString('pt-BR')} \n`);
         console.log();
         }
     }
@@ -631,7 +630,7 @@ class Sistema {
           });
         for (let pedido of novaListaPedidos) {
 
-        console.log(`ID: ${pedido.idUnico} \nID do Cliente: ${pedido.idCliente} \nStatus do Pedido: ${pedido.status} \nPreco: ${pedido.dataPedido.toLocaleDateString('pt-BR')} \nDescricao: ${pedido.descricao}\n`);
+        console.log(`ID: ${pedido.idUnico} \nID do Cliente: ${pedido.idCliente} \nStatus do Pedido: ${pedido.status} \nData do Pedido: ${pedido.dataPedido.toLocaleDateString('pt-BR')}\n`);
         console.log();
         }
     }
@@ -645,7 +644,7 @@ class Sistema {
                 if (Pedido.idUnico == idPedido){//ve se o pedido esta na lista, se for entra no if
                     if (Pedido.idCliente == id) {//ve se o pedido encontrado eh o do cliente logado, se sim, entra no if
                         if (Pedido.status != 'realizado') { //ve o status do pedido, caso ele ainda nao tenha sido entregue, o cliente naoi pode avaliar, caso contrario pode
-                            console.log('O pedido ainda nao foi entregue, entao voce nao pode avaliar');
+                            console.log('O pedido ainda nao foi entregue');
                         }
                         else{
                             confirmacaoAvaliacao = true; //pedido existe e pode avaliar, loop acaba
@@ -654,6 +653,7 @@ class Sistema {
                 }
                 if (confirmacaoAvaliacao == false) { 
                     console.log('Voce nao pode avaliar este pedido'); //caso o id do pedido nao seja encontrado ou seja encontrado mas nao pertenca ao cliente ou o status esteja inadequado
+                    break
                 }
                 else if (confirmacaoAvaliacao == true){ // caso o pedido possa ser avaliado, entra neste if
                     for (let cliente of listaClientes) {
@@ -708,6 +708,8 @@ class Sistema {
     //metodo para o funcionario poder mexer na sua conta (ver dados, modificar dados,ver lista de pedidos, etc)
     //tem argumento o id do funcionario logado
     funcionarioLogado(id) {
+        //atribuindo uma variavel a classe sistema
+        var iniciarLoginFunc = new Sistema()
         //loop para manter o usuario no menu ate que ele digite uma opcao correta
         while (true){
             console.log('-------------- Sua conta (Funcionario) --------------\n');
@@ -729,56 +731,47 @@ class Sistema {
             }
             if (escolha == '1') {
                 console.log('-------------- Seus Dados --------------\n');
-                let dadosFuncionario = new Sistema();
-                console.log(dadosFuncionario.verDadosFunc(id));
+                iniciarLoginFunc.verDadosFunc(id);
                 continue
             }
             if (escolha == '2') {
                 console.log('-------------- Modificar Dados --------------\n');
-                let modificarFuncionario = new Sistema();
-                console.log(modificarFuncionario.modificarDadosFunc(id));
+                iniciarLoginFunc.modificarDadosFunc(id);
                 continue
             }
             if (escolha == '3') {
                 console.log('-------------- Lista de Pedidos --------------\n');
-                let verPedidos = new Sistema();
-                console.log(verPedidos.verListaPedidos());
+                iniciarLoginFunc.verListaPedidos();
                 continue
             }
             if (escolha == '4') {
                 console.log('-------------- Lista de Produtos --------------\n');
-                let verProdutos = new Sistema();
-                console.log(verProdutos.verListaProdutos());
+                iniciarLoginFunc.verListaProdutos();
                 continue
             }
             if (escolha == '5') {
                 console.log('-------------- Lista de Clientes --------------\n');
-                let verClientes = new Sistema();
-                console.log(verClientes.verListaClientes());
+                iniciarLoginFunc.verListaClientes();
                 continue
             }
             if (escolha == '6') {
                 console.log('-------------- Alterar Status do Pedido --------------\n');
-                let statusPedido = new Sistema();
-                console.log(statusPedido.modificarStatusPedido());
+                iniciarLoginFunc.modificarStatusPedido();
                 continue
             }
             if (escolha == '7') {
                 console.log('-------------- Adicionar Produto --------------\n');
-                let novoProduto = new Sistema();
-                console.log(novoProduto.adicionarProduto());
+                iniciarLoginFunc.adicionarProduto();
                 continue
             }
             if (escolha == '8') {
                 console.log('-------------- Alterar Produto --------------\n');
-                let alterar = new Sistema();
-                console.log(alterar.alterarProduto());
+                iniciarLoginFunc.alterarProduto();
                 continue
             }
             if (escolha == '9') {
                 console.log('-------------- Excluir Produto --------------\n');
-                let excluirProduto = new Sistema();
-                console.log(excluirProduto.removerProduto());
+                iniciarLoginFunc.removerProduto();
                 continue
             }
             if (escolha == '10') {
@@ -789,6 +782,8 @@ class Sistema {
     }
     //metodo para o cliente poder mexer na sua conta (ver dados, modificar dados,ver lista de pedidos, etc)
     clienteLogado(id) {
+        //atribuindo uma variavel a classe sistema
+        var iniciarLoginCliente = new Sistema()
         //loop para manter o usuario no menu ate que ele digite uma opcao correta
         while (true){
             console.log('-------------- Sua conta (Cliente) --------------\n');
@@ -809,50 +804,42 @@ class Sistema {
             }
             if (escolha == '1') {
                 console.log('-------------- Seus Dados --------------\n');
-                let dadosCliente = new Sistema();
-                console.log(dadosCliente.verDadosCliente(id));
+                iniciarLoginCliente.verDadosCliente(id);
                 continue
             }
             if (escolha == '2') {
                 console.log('-------------- Modificar Dados --------------\n');
-                let modificarCliente = new Sistema();
-                console.log(modificarCliente.modificarDadosCliente(id));
+                iniciarLoginCliente.modificarDadosCliente(id);
                 continue
             }
             if (escolha == '3') {
                 console.log('-------------- Lista de Produtos --------------\n');
-                let verProdutos = new Sistema();
-                console.log(verProdutos.verListaProdutos());
+                iniciarLoginCliente.verListaProdutos();
                 continue
             }
             if (escolha == '4') {
                 console.log('-------------- Fazer Pedido --------------\n');
-                let pedido = new Sistema();
-                console.log(pedido.fazerPedido(id));
+                iniciarLoginCliente.fazerPedido(id);
                 continue
             }
             if (escolha == '5') {
                 console.log('-------------- Cancelar Pedido --------------\n');
-                let cancelar = new Sistema();
-                console.log(cancelar.cancelarPedido(id));
+                iniciarLoginCliente.cancelarPedido(id);
                 continue
             }
             if (escolha == '6') {
                 console.log('-------------- Lista de seus Pedidos --------------\n');
-                let verPedidos = new Sistema();
-                console.log(verPedidos.verPedidosCliente(id));
+                iniciarLoginCliente.verPedidosCliente(id);
                 continue
             }
             if (escolha == '7') {
                 console.log('-------------- Avaliar Pedido --------------\n');
-                let avaliar = new Sistema();
-                console.log(avaliar.avaliarPedido(id));
+                iniciarLoginCliente.avaliarPedido(id);
                 continue
             }
             if (escolha == '8') {
                 console.log('-------------- Visualizar Avaliacoes --------------\n');
-                let visualizar = new Sistema();
-                console.log(visualizar.visualizarAvaliacao());
+                iniciarLoginCliente.visualizarAvaliacao();
                 continue
             }
             if (escolha == '9') {
@@ -942,8 +929,7 @@ while (true) {
     if (escolha == '1') {
 
         console.log('-------------- Fazer Login --------------\n');
-        let login = new Sistema();
-        login.fazerLogin();
+        iniciarSistema.fazerLogin();
     }
     //parte do codigo para o usuario acessar o cadastro
     if (escolha == '2') {

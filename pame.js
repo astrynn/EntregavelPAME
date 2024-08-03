@@ -374,25 +374,42 @@ class Sistema {
                     } 
                     break
                 } 
+                while (true) { //mesma linha de raciocinio para o bloco de codigos de alteracao de nome, mas nesse caso para a alteracao da data de nascimento
+                    let escolha = input.question(`Deseja alterar a Data de Nascimento? A atual eh ${cliente.dataNascimento} (s/n): `);
+                    if (escolha == 's') {
+
+                        let novaData = input.question('Digite a senha: ') 
+                        cliente.dataNascimento = novaData;
+                        break
+                    }
+                    if (escolha != 's' && escolha != 'n') {
+                        console.log('Digite uma opcao valida\n')
+                        continue
+                    } 
+                    break
+                }
             }   
         }
     }
+    //metodo para o funcionario adicionar algum produto
     adicionarProduto() {
+        //pergunta os dados do produto para o funcionario
         let validade = input.question('Digite a data de validade (xx/xx/xxxx): ');
         let preco = input.question('Digite o preco: ');
         let qtdEstoque = input.question('Digite a quantidade no estoque: ');
         let nome = input.question('Digite o nome do produto: ');
         let descricao = input.question('Digite a descricao do produto: ');
 
-        //armazenando os dadoas na listaProdutos, assim essa lista se torna uma lista de objetos do tipo produto
+        //armazenando os dados na listaProdutos, assim essa lista se torna uma lista de objetos do tipo produto
         listaProdutos.push(new Produto(validade, preco, qtdEstoque, nome, descricao));
         console.log('Produto adicionado com sucesso!\n');
     }
+    //metodo para o funcionario alterar um produto
     alterarProduto() {
-        var confirmacaoAlteracao = false
+        var confirmacaoAlteracao = false //variavel de condicao para o termino do loop
         while (confirmacaoAlteracao == false) {
             let escolhaProduto = input.question('Digite o nome do produto: ');
-            //verifica se o nome digitado esta na lista, se nao estiverr, entra no if
+            //verifica se o nome digitado esta na lista, se estiver, entra no if e o loop eh quebrado
             for (let i = 0; i < listaProdutos.length; i++) {
                 if (listaProdutos[i].nome == escolhaProduto) {
                     console.log('Produto encontrado\n')
@@ -400,13 +417,15 @@ class Sistema {
                     break
                 }
             }
-            if (confirmacaoAlteracao == false){
+            if (confirmacaoAlteracao == false){ //se nao estiver na lista, pede para o usuario digitar um outro produto
                 console.log('Produto nao foi encontrado, digite novamente')
             }
         }
+        //quando o loop quebrar, entra no for, que procura onde esta o produto
         for (let produto of listaProdutos) {
 
-            if (produto.nome == escolhaProduto){
+            if (produto.nome == escolhaProduto){ // encontrando o produto, segue a mesma linha de raciocionio da parte do codigo
+                                                // de mudanca dos dados de clientes e funcionarios, mas para os dados do produto
 
                 while (true) {
                     let escolha = input.question(`Deseja alterar a Data de Validade? A atual eh ${produto.validade} (s/n): `);
@@ -449,7 +468,7 @@ class Sistema {
                     if (escolha == 's') {
                         while (true) {
                             let novoEstoque = input.question('Digite a Nova Quantidade: ')
-                            try {
+                            try { //garante que o usuario digite apenas numeros
                                 if (isNaN(novoEstoque)) {
                                 throw new Error();
                                 }
@@ -458,7 +477,7 @@ class Sistema {
                                 console.log('Digite apenas numeros')
                                 continue
                             }
-                            if (parseInt(novoEstoque) < 0) {
+                            if (parseInt(novoEstoque) < 0) { //quantidade nao pode ser negativa
                                 console.log('Digite um numero maior ou igual a 0')
                             }
                             break
@@ -475,7 +494,7 @@ class Sistema {
                     if (escolha == 's') {
                         while (true) {
                             let novoPreco = input.question('Digite o Novo Preco: ')
-                            try {
+                            try { //garante que o usuario digite apenas numeros
                                 if (isNaN(novoPreco)) {
                                 throw new Error();
                                 }
@@ -484,7 +503,7 @@ class Sistema {
                                 console.log('Digite apenas numeros')
                                 continue
                             }
-                            if (parseInt(novoPreco) < 0) {
+                            if (parseInt(novoPreco) < 0) { //preco nao pode ser negativo
                                 console.log('Digite um numero maior ou igual a 0')
                             }
                             break
@@ -513,6 +532,7 @@ class Sistema {
             }   
         }
     }
+    //metodo para o funcionario remover um produto
     removerProduto(){
         let confirmacao = false
         while (confirmacao == false) {
@@ -535,15 +555,15 @@ class Sistema {
                 confirmacao = true // neste cado contagem >= 1 e entao o produto foi encontrado, podendo assim quebrar o loop
             }
         }
-        listaProdutos = novaListaProdutos
+        listaProdutos = novaListaProdutos //guarda uma nova lista com o produto removido
         console.log('Produto removido com sucesso!\n')  
     }
-
+    //metodo para o cliente fazer um pedido, que tem como argumento o id do cliente logado
     fazerPedido(IDcliente){
         let confirmacao = false
         while (confirmacao == false) {
             var escolhaPedido = input.question('Digite o nome do produto: ');
-            //verifica se o nome digitado esta na lista, se nao estiverr, entra no if
+            //verifica se o nome digitado esta na lista, se estiverr, entra no if e o cliente pode pedir
             for (let i = 0; i < listaProdutos.length; i++) {
                 if (listaProdutos[i].nome == escolhaPedido) {
                     console.log('Produto encontrado\n')
@@ -551,7 +571,7 @@ class Sistema {
                     let hoje = new Date(); //pega a data de hoje (data do pedido)
                     listaPedidos.push(new Pedido(idUnicoPedido.toString(), IDcliente,'Pedido pendente', hoje));
                     idUnicoPedido++
-                    console.log(`Aqui esta o ID do seu pedido: ${idUnicoPedido}`);
+                    console.log(`Aqui esta o ID do seu pedido: ${idUnicoPedido}`); //da o id do pedido para o cliente
                     break
                 }
             }
@@ -561,31 +581,36 @@ class Sistema {
         }
 
     }
+    //metodo para ver a lista de pedidos em ordem cronologica
     verListaPedidos(){
         listaProdutos.sort((a, b) => {
             let data1 = a.dataPedido;
             let data2 = b.dataPedido;
             return data1 - data2; //ordena em ordem crescente a data
           });
-        for (let pedido of listaPedidos) {
+        for (let pedido of listaPedidos) { //para cada pedido, printa a informacao para o usuario
 
         console.log(`ID: ${pedido.idUnico} \nID do Cliente: ${pedido.idCliente} \nStatus do Pedido: ${pedido.status} \nPreco: ${pedido.dataPedido.toLocaleDateString('pt-BR')} \nDescricao: ${pedido.descricao}\n`);
         console.log();
         }
     }
+    //metodo para alterar o status do pedido
     modificarStatusPedido() {
         var confirmacaoStatus = false
         while (confirmacaoStatus == false) {
             var escolhaIDstatus = input.question('Digite o ID do pedido que voce quer modificar o status: ');
-            //verifica se o ID digitado esta na lista de pedidos, se nao estiver, entra no if
+            //verifica se o ID digitado esta na lista de pedidos, se estiver, entra no if e entao o status do pedido pode ser alterado
             for (let i = 0; i < listaProdutos.length; i++) {
                 if (listaPedidos[i].idUnico == escolhaIDstatus) {
                     console.log('Pedido encontrado\n');
-                    confirmacaoAlteracao = true;
+                    confirmacaoAlteracao = true; //quando voltar para o inicio do while acima, o loop sera quebrado
                     while (true) {
                         let escolhaStatus = input.question('Digite o novo status do pedido (pedido pendente, adiado, realizado, cancelado: ')
+                        // pede para o usuario digitar o novo status e substitui na lista de pedidos
                         if (escolhaStatus != 'pedido pendente' && escolhaStatus != 'adiado' && escolhaStatus != 'realizado' && escolhaStatus != 'cancelado') {
                             console.log('Digite um status valido');
+                            continue
+                            //if para garantir que o usuario digite apenas um status valido-
                         }
                         if (escolhaStatus == 'pedido pendente') {
                             listaPedidos[i].status = 'pedido pendente';
@@ -608,13 +633,14 @@ class Sistema {
             }
         }  
     }
+    //metodo para o cliente cancelar o pedido, que tem como argumento o do cliente logado
     cancelarPedido(id) {
         let confirmacao = false;
         while (confirmacao == false){
             let idPedido = input.question('Digite o ID do pedido que voce quer cancelar: ')
-            for (let pedido of listaPedidos) {
-                if (pedido.idUnico == idPedido){
-                    if (pedido.idCliente == id) {
+            for (let pedido of listaPedidos) { //percorre a lista de pedidos para encontrar o pedido que o cliente quer cancelar
+                if (pedido.idUnico == idPedido){ //se o pedido for encontrado, entra no if
+                    if (pedido.idCliente == id) {//se o pedido encontrado for do cliente logado, entra no if e o pedido é cancelado
                         console.log('Pedido cancelado com sucesso!');
                         pedido.status = 'cancelado';
                         confirmacao = true;
@@ -627,6 +653,7 @@ class Sistema {
             }
         }
     }
+    //metodo para ver a lista de pedidos do cliente logado, que tem como argumento o id do cliente
     verPedidosCliente(id) {
         var novaListaPedidos = []; //lista criada para colocar apenas os pedidos do cliente com determinado id
         for (let i = 0; i < listaPedidos.length; i++) {
@@ -646,15 +673,16 @@ class Sistema {
         console.log();
         }
     }
+    //metodo para o cliente realizar a avaliacao do pedido, que tem como argumento o id do cliete logado
     avaliarPedido(id) {
 
         var confirmacaoAvaliacao = false;
         while (confirmacaoAvaliacao == false){
             var idPedido = input.question('Digite o ID do pedido que voce quer avaliar: ')
-            for (var Pedido of listaPedidos) {
-                if (Pedido.idUnico == idPedido){
-                    if (Pedido.idCliente == id) {
-                        if (Pedido.status != 'realizado') {
+            for (var Pedido of listaPedidos) {//percorre a lista de pedidos
+                if (Pedido.idUnico == idPedido){//ve se o pedido esta na lista, se for entra no if
+                    if (Pedido.idCliente == id) {//ve se o pedido encontrado eh o do cliente logado, se sim, entra no if
+                        if (Pedido.status != 'realizado') { //ve o status do pedido, caso ele ainda nao tenha sido entregue, o cliente naoi pode avaliar, caso contrario pode
                             console.log('O pedido ainda nao foi entregue, entao voce nao pode avaliar');
                         }
                         else{
@@ -662,19 +690,19 @@ class Sistema {
                         }
                     }
                 }
-                if (confirmacaoAvaliacao == false) {
-                    console.log('Pedido nao encontrado, tente novamente'); //caso o id do pedido nao seja encontrado ou seja encontrado mas nao pertenca ao cliente
+                if (confirmacaoAvaliacao == false) { 
+                    console.log('Voce nao pode avaliar este pedido'); //caso o id do pedido nao seja encontrado ou seja encontrado mas nao pertenca ao cliente ou o status esteja inadequado
                 }
-                else if (confirmacaoAvaliacao == true){
+                else if (confirmacaoAvaliacao == true){ // caso o pedido possa ser avaliado, entra neste if
                     for (let cliente of listaClientes) {
                         if (cliente.idUnico == id){
-                            var nomeClienteAvaliando = cliente.nome;
+                            var nomeClienteAvaliando = cliente.nome; //pega o nome do cliente que esta avaliando o pedido
                         }
                     }
                     while (true) {
                         var avaliacaoInicial = input.question('Digite sua avaliação, de 1 a 5: ')
                         try {
-                            if (isNaN(avaliacaoInicial)) {
+                            if (isNaN(avaliacaoInicial)) { // avaliacao deve ser um numero
                             throw new Error();
                             }
                         } 
@@ -682,26 +710,26 @@ class Sistema {
                             console.log('Digite apenas numeros')
                             continue
                         }
-                        if ( 1 > parseInt(avaliacaoInicial) > 5) {
+                        if ( 1 > parseInt(avaliacaoInicial) > 5) { //avaliacao deve ser um numero entre 1 e 5
                             console.log('Digite um numero entre 1 (inclusive) e 5 (inclusive)')
                             continue
                         }
-                        while (true){    
+                        while (true){    //caso o usuario queira escrever uma avaliacao ao inves de so dar um numero avaliativo
                             var escolhaMaisAvaliacao = input.question('Deseja comentar sobre o pedido? s/n');
                             if (escolhaMaisAvaliacao != 's' && escolhaMaisAvaliacao != 'n') {
                                 console.log('Digite uma resposta valida')
                                 continue
                             } 
-                            else if(escolhaMaisAvaliacao == 's') {
+                            else if(escolhaMaisAvaliacao == 's') { //pede para o usuario digitar caso ele queira
                                 var maisAvaliacao = input.question('Digite o comentario sobre o pedido: ');
                                 break    
                             }
-                            else if(escolhaMaisAvaliacao == 'n'){
+                            else if(escolhaMaisAvaliacao == 'n'){ // se a resposta for nao, nao pede pra digitar
                                 var maisAvaliacao = '';
                                 break
                             }
                         }
-                        let avaliacaoFinalPedido = avaliacaoInicial + '. ' + maisAvaliacao
+                        let avaliacaoFinalPedido = avaliacaoInicial + '. ' + maisAvaliacao // concatenacao entre strings para juntar a avaliacao numerica + a avaliacao comentada
                         listaAvaliacao.push(Avaliacao(nomeClienteAvaliando,idPedido,avaliacaoFinalPedido))
                         break  
                     }
@@ -709,6 +737,7 @@ class Sistema {
             }
         }   
     }
+    //metodo para o cliente visualizar as avaliacoes
     visualizarAvaliacao() {
         for (let avaliacao of listaAvaliacao) {
                 console.log(`Nome do Cliente: ${avaliacao.nomeDoCliente} \nID do Pedido: ${avaliacao.idDoPedido} \nAvaliacao: ${avaliacao.Avaliacao} \n`);

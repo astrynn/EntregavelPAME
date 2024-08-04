@@ -496,14 +496,90 @@ class Sistema {
     //metodo para o funcionario adicionar algum produto
     adicionarProduto() {
         //pergunta os dados do produto para o funcionario
-        let validade = input.question('Digite a data de validade (xx/xx/xxxx): ');
-        let preco = input.question('Digite o preco: ');
-        let qtdEstoque = input.question('Digite a quantidade no estoque: ');
-        let nome = input.question('Digite o nome do produto: ');
+        function validarData(data) {
+            //expressao regular para verificar o formato DD/MM/YYYY
+            let regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+            if (!regex.test(data)) {
+                return false; //formato invalido
+            }
+            //divide a data em dia, mes e ano
+            let [dia, mes, ano] = data.split('/').map(Number);
+            //verifica o mes
+            if (mes < 1 || mes > 12) {
+                return false; //mes invalido
+            }
+            // Verifica o dia
+            if (dia < 1 || dia > 31) {
+                return false; //dia invalido
+            }
+            //verifica se o dia eh valido para o mes especifico
+            let diasNoMes = [31, (ano % 4 === 0 && (ano % 100 !== 0 || ano % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            if (dia > diasNoMes[mes - 1]) {
+                return false; // Dia inválido para o mês
+            }
+            return true; //data valida
+        }
+        while (true) { // Loop para garantir que o usuário digite uma data de nascimento válida
+            var dataValidade = input.question('Digite a data de validade (DD/MM/YYYY): ');
+            if (validarData(dataValidade)) {
+                break; //sai do loop se a data for valida
+            } else {
+                console.log('Data invalida. Certifique-se de usar o formato DD/MM/YYYY e que a data seja válida.');
+            }
+        }
+        while (true) {
+            var qtdEstoque = input.question('Digite a quantidade no estoque: ')
+            try { //garante que o usuario digite apenas numeros
+                if (isNaN(qtdEstoque)) {
+                throw new Error();
+                }
+            } 
+            catch(erro) {
+                console.log('Digite apenas numeros.')
+                continue
+            }
+            if (parseInt(qtdEstoque) < 0) { //quantidade nao pode ser negativa
+                console.log('Digite um numero maior ou igual a 0.')
+                continue
+            }
+            break
+        }
+        while (true) {
+            var preco = input.question('Digite o preco do produto: ')
+            try { //garante que o usuario digite apenas numeros
+                if (isNaN(preco)) {
+                throw new Error();
+                }
+            } 
+            catch(erro) {
+                console.log('Digite apenas numeros.')
+                continue
+            }
+            if (parseInt(preco) < 0) { //quantidade nao pode ser negativa
+                console.log('Digite um numero maior ou igual a 0.')
+                continue
+            }
+            break
+        }
+        while (true) { //loop para garantir que o usuário digite um produto não cadastrado
+            var nomeProduto = input.question('Digite o nome do produto: ');
+            let confirmacao = false; //inicializa como falso
+            //verifica se o produto está na lista de produtos
+            for (let produto of listaProdutos) {
+                if (produto.nome == nomeProduto) {
+                    console.log('Este produto ja esta cadastrado.');
+                    confirmacao = true ;
+                    break; //sai do loop 
+                }
+            }
+            //se o produto não está cadastrado, sai do loop
+            if (confirmacao == false) {
+                break;
+            }
+        }
         let descricao = input.question('Digite a descricao do produto: ');
-
         //armazenando os dados na listaProdutos, assim essa lista se torna uma lista de objetos do tipo produto
-        listaProdutos.push(new Produto(validade, preco, qtdEstoque, nome, descricao));
+        listaProdutos.push(new Produto(dataValidade, preco, qtdEstoque, nomeProduto, descricao));
         console.log('Produto adicionado com sucesso!\n');
     }
     //metodo para o funcionario alterar um produto
@@ -528,14 +604,42 @@ class Sistema {
 
             if (produto.nome == escolhaProduto){ // encontrando o produto, segue a mesma linha de raciocionio da parte do codigo
                                                 // de mudanca dos dados de clientes e funcionarios, mas para os dados do produto
-
                 while (true) {
                     let escolha = input.question(`Deseja alterar a Data de Validade? A atual eh ${produto.validade} (s/n): `);
                     if (escolha == 's') {
 
-                        let novaValidade = input.question('Digite a Data de Validade: ') 
-                        produto.validade = novaValidade;
-                        break
+                        function validarData(data) {
+                            //expressao regular para verificar o formato DD/MM/YYYY
+                            let regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+                            if (!regex.test(data)) {
+                                return false; //formato invalido
+                            }
+                            //divide a data em dia, mes e ano
+                            let [dia, mes, ano] = data.split('/').map(Number);
+                            //verifica o mes
+                            if (mes < 1 || mes > 12) {
+                                return false; //mes invalido
+                            }
+                            // Verifica o dia
+                            if (dia < 1 || dia > 31) {
+                                return false; //dia invalido
+                            }
+                            //verifica se o dia eh valido para o mes especifico
+                            let diasNoMes = [31, (ano % 4 === 0 && (ano % 100 !== 0 || ano % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+                            if (dia > diasNoMes[mes - 1]) {
+                                return false; // Dia inválido para o mês
+                            }
+                            return true; //data valida
+                        }
+                        while (true) { // Loop para garantir que o usuário digite uma data de nascimento válida
+                            var dataValidade = input.question('Digite a data de validade (DD/MM/YYYY): ');
+                            if (validarData(dataValidade)) {
+                                produto.validade = dataValidade;
+                                break; //sai do loop e substitui se a data for valida
+                            } else {
+                                console.log('Data invalida. Certifique-se de usar o formato DD/MM/YYYY e que a data seja válida.');
+                            }
+                        }
                     }
                     if (escolha != 's' && escolha != 'n') {
                         console.log('Digite uma opcao valida\n')
@@ -554,7 +658,8 @@ class Sistema {
                                     console.log('Produto ja esta em estoque, tente novamente');
                                 }
                                 else {
-                                    confirmacao = true
+                                    produto.nome = novoProduto;
+                                    confirmacao = true;
                                 }
                             }
                         } 
@@ -581,6 +686,10 @@ class Sistema {
                             }
                             if (parseInt(novoEstoque) < 0) { //quantidade nao pode ser negativa
                                 console.log('Digite um numero maior ou igual a 0')
+                                continue
+                            }
+                            else if (parseInt(novoEstoque) >= 0) { //
+                                produto.qtdEstoque = novoEstoque;
                             }
                             break
                         } 
@@ -607,6 +716,10 @@ class Sistema {
                             }
                             if (parseInt(novoPreco) < 0) { //preco nao pode ser negativo
                                 console.log('Digite um numero maior ou igual a 0')
+                                continue
+                            }
+                            else if (parseInt(novoPreco) >= 0) { //
+                                produto.preco = novoPreco;
                             }
                             break
                         }
@@ -668,17 +781,19 @@ class Sistema {
             //verifica se o nome digitado esta na lista, se estiverr, entra no if e o cliente pode pedir
             for (let i = 0; i < listaProdutos.length; i++) {
                 if (listaProdutos[i].nome == escolhaPedido) {
-                    console.log('Produto encontrado\n')
-                    confirmacao = true
-                    let hoje = new Date(); //pega a data de hoje (data do pedido)
-                    listaPedidos.push(new Pedido(idUnicoPedido.toString(), IDcliente,'Pedido pendente', hoje));
-                    console.log(`Aqui esta o ID do seu pedido: ${idUnicoPedido}`); //da o id do pedido para o cliente
-                    idUnicoPedido++;
-                    break
+                    if (listaProdutos[i].qtdEstoque > 0){
+                        console.log('Produto encontrado.');
+                        confirmacao = true;
+                        let hoje = new Date(); //pega a data de hoje (data do pedido)
+                        listaPedidos.push(new Pedido(idUnicoPedido.toString(), IDcliente,'Pedido pendente', hoje));
+                        console.log(`Aqui esta o ID do seu pedido: ${idUnicoPedido}`); //da o id do pedido para o cliente
+                        idUnicoPedido++;
+                        break
+                    }
                 }
             }
             if (confirmacao == false){
-                console.log('Produto nao foi encontrado, digite novamente')
+                console.log('Produto nao encontrado ou nao ha estoque.')
             }
         }
 

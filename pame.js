@@ -193,17 +193,36 @@ class Sistema {
                 while (true) { //mesma linha de raciocinio do while acima, mas para o cpf
                     let escolha = input.question(`Deseja alterar o CPF? O atual eh ${funcionario.cpf} (s/n): `);
                     if (escolha == 's') {
-                        var confirmacao = false //variavel de condicao para o loop abaixo, que tem como objetivo fazer com que o ousuario digite um cpf ainda nao existente
-                        while (confirmacao == false) {
-                            let novoCPF = input.question('Digite o CPF: ');
-                            for (let funcionarios of listaFuncionarios){ //passa pela lista de funcionarios e ve se o cpf existe ou nao
-                                if (funcionarios.cpf == novoCPF){ //se existir entra no if e volta para o inicio do loop
-                                    console.log('CPF ja cadastrado, tente novamente');
-                                }
-                                else { //se nao existir, o loop pode acabar e o cpf eh substituido
-                                    funcionario.cpf = novoCPF;
+                        while (true) { //loop para garantir que o usuario digite o cpf corretamente e um cpf nao repetido
+                            var cpfFuncionario = input.question('Digite o seu CPF: ');
+                            //verifica se o CPF tem exatamente 11 digitos e se eh composto apenas por numeros
+                            if (!/^\d{11}$/.test(cpfFuncionario)) {
+                                console.log('O CPF deve ter exatamente 11 digitos e conter apenas numeros.');
+                                continue; //pede o CPF novamente
+                            }
+                            let confirmacao = false; //inicializa como falso
+                            //verifica se o CPF esta na lista de funcionários
+                            for (let funcionario of listaFuncionarios) {
+                                if (funcionario.cpf == cpfFuncionario) {
+                                    console.log('Este CPF já está cadastrado como funcionario.');
                                     confirmacao = true;
+                                    break; //sai do loop de funcionários
                                 }
+                            }
+                            //verifica se o CPF está na lista de clientes
+                            if (confirmacao == false) {
+                                for (let cliente of listaClientes) {
+                                    if (cliente.cpf == cpfFuncionario) {
+                                        console.log('Este CPF já está cadastrado como cliente.');
+                                        confirmacao = true;
+                                        break; //sai do loop de clientes
+                                    }
+                                }
+                            }
+                            //se o CPF não está cadastrado, sai do loop substitui a resposta na lista
+                            if (confirmacao == false) {
+                                funcionario.cpf = cpfFuncionario;
+                                break;
                             }
                         } 
                     }
@@ -216,17 +235,45 @@ class Sistema {
                 while (true) { //mesma linha de raciocinio para o bloco de codigos da alteracao do cpf. mas nesse caso para o email
                     let escolha = input.question(`Deseja alterar o Email? O atual eh ${funcionario.email} (s/n): `);
                     if (escolha == 's') {
-                        var confirmacao = false
-                        while (confirmacao == false) {
-                            let novoEmail = input.question('Digite o Email: ')
-                            for (let funcionarios of listaFuncionarios){
-                                if (funcionarios.Email == novoEmail){
-                                    console.log('Email ja cadastrado, tente novamente')
+                        function validarEmail(email) {
+                            //verifica se o e-mail contém exatamente um arroba e se ha letras antes e depois do arroba
+                            let regex = /^[a-zA-Z]+@[a-zA-Z]+\.[a-zA-Z]+$/;
+                            let partes = email.split('@');
+                            //verifica se ha exatamente um arroba e se a estrutura esta correta
+                            if (partes.length !== 2 || !regex.test(email)) {
+                                return false;
+                            }
+                            return true;
+                        }
+                        while (true) { //loop para garantir que o usuário digite um e-mail válido e não cadastrado
+                            var emailFuncionario = input.question('Digite o seu e-mail: ');
+                            if (!validarEmail(emailFuncionario)) {
+                                console.log('Email invalido. O email deve conter pelo menos uma letra antes do arroba e uma letra seguido de ponto e outra letra depois do @ (Ex: a@a.a).');
+                                continue; //pede o e-mail novamente
+                            }
+                            let confirmacao = false; //inicializa como falso
+                            //verifica se o email está na lista de funcionários
+                            for (let funcionario of listaFuncionarios) {
+                                if (funcionario.email === emailFuncionario) {
+                                    console.log('Este email ja esta cadastrado como funcionario.');
+                                    confirmacao = true;
+                                    break; // Sai do loop de funcionários
                                 }
-                                else {
-                                    funcionario.email = novoEmail;
-                                    confirmacao = true
+                            }
+                            //verifica se o email está na lista de clientes
+                            if (confirmacao == false) {
+                                for (let cliente of listaClientes) {
+                                    if (cliente.email === cpfFuncionario) {
+                                        console.log('Este email ja esta cadastrado como cliente.');
+                                        confirmacao = true;
+                                        break; //sai do loop de clientes
+                                    }
                                 }
+                            }
+                            //se o e-mail não está cadastrado, sai do loop
+                            if (confirmacao == false) { 
+                                funcionario.email = emailFuncionario;
+                                break;
                             }
                         } 
                     }
@@ -239,9 +286,17 @@ class Sistema {
                 while (true) { //mesma linha de raciocinio para o bloco de codigos de alteracao de nome, mas nesse caso para a alteracao da senha
                     let escolha = input.question(`Deseja alterar a Senha? (s/n): `);
                     if (escolha == 's') {
-
-                        let novaSenha = input.question('Digite a senha: ') 
-                        funcionario.senha = novaSenha;
+                        while (true) { //loop para garantir que o usuário digite uma senha com pelo menos 6 dígitos
+                            var senhaFuncionario = input.question('Digite a sua senha: ');
+                            //verifica se a senha tem pelo menos 6 dígitos
+                            if (senhaFuncionario.length < 6) {
+                                console.log('A senha deve ter pelo menos 6 digitos.');
+                                continue; //pede a senha novamente
+                            } 
+                            //se a senha eh valida, substitui e sai do loop
+                            funcionario.senha = senhaFuncionario;
+                            break;
+                        }
                         break
                     }
                     if (escolha != 's' && escolha != 'n') {
@@ -276,17 +331,36 @@ class Sistema {
                 while (true) { //mesma linha de raciocinio do while acima, mas para o cpf
                     let escolha = input.question(`Deseja alterar o CPF? O atual eh ${cliente.cpf} (s/n): `);
                     if (escolha == 's') {
-                        var confirmacao = false //variavel de condicao para o loop abaixo, que tem como objetivo fazer com que o usuario digite um cpf ainda nao existente
-                        while (confirmacao == false) {
-                            let novoCPF = input.question('Digite o CPF: ');
-                            for (let clientes of listaClientes){ //passa pela lista de clientes e ve se o cpf existe ou nao
-                                if (clientes.cpf == novoCPF){ //se existir entra no if e volta para o inicio do loop
-                                    console.log('CPF ja cadastrado, tente novamente');
-                                }
-                                else { //se nao existir, o loop pode acabar e o cpf eh substituido
-                                    cliente.cpf = novoCPF;
+                        while (true) { //loop para garantir que o usuario digite o cpf corretamente e um cpf nao repetido
+                            var cpfCliente = input.question('Digite o seu CPF: ');
+                            //verifica se o CPF tem exatamente 11 digitos e se eh composto apenas por numeros
+                            if (!/^\d{11}$/.test(cpfCliente)) {
+                                console.log('O CPF deve ter exatamente 11 digitos e conter apenas numeros.');
+                                continue; //pede o CPF novamente
+                            }
+                            let confirmacao = false; //inicializa como falso
+                            //verifica se o CPF esta na lista de funcionários
+                            for (let funcionario of listaFuncionarios) {
+                                if (funcionario.cpf == cpfCliente) {
+                                    console.log('Este CPF já está cadastrado como funcionario.');
                                     confirmacao = true;
+                                    break; //sai do loop de funcionários
                                 }
+                            }
+                            //verifica se o CPF está na lista de clientes
+                            if (confirmacao == false) {
+                                for (let cliente of listaClientes) {
+                                    if (cliente.cpf == cpfCliente) {
+                                        console.log('Este CPF já está cadastrado como cliente.');
+                                        confirmacao = true;
+                                        break; //sai do loop de clientes
+                                    }
+                                }
+                            }
+                            //se o CPF não está cadastrado, sai do loop substitui a resposta na lista
+                            if (confirmacao == false) {
+                                cliente.cpf = cpfCliente;
+                                break;
                             }
                         } 
                     }
@@ -299,17 +373,45 @@ class Sistema {
                 while (true) { //mesma linha de raciocinio para o bloco de codigos da alteracao do cpf. mas nesse caso para o email
                     let escolha = input.question(`Deseja alterar o Email? O atual eh ${cliente.email} (s/n): `);
                     if (escolha == 's') {
-                        var confirmacao = false
-                        while (confirmacao == false) {
-                            let novoEmail = input.question('Digite o Email: ')
-                            for (let clientes of listaClientes){
-                                if (clientes.email == novoEmail){
-                                    console.log('Email ja cadastrado, tente novamente')
+                        function validarEmail(email) {
+                            //verifica se o e-mail contém exatamente um arroba e se ha letras antes e depois do arroba
+                            let regex = /^[a-zA-Z]+@[a-zA-Z]+\.[a-zA-Z]+$/;
+                            let partes = email.split('@');
+                            //verifica se ha exatamente um arroba e se a estrutura esta correta
+                            if (partes.length !== 2 || !regex.test(email)) {
+                                return false;
+                            }
+                            return true;
+                        }
+                        while (true) { //loop para garantir que o usuário digite um e-mail válido e não cadastrado
+                            var emailCliente = input.question('Digite o seu e-mail: ');
+                            if (!validarEmail(emailCliente)) {
+                                console.log('Email invalido. O email deve conter pelo menos uma letra antes do arroba e uma letra seguido de ponto e outra letra depois do @ (Ex: a@a.a).');
+                                continue; //pede o e-mail novamente
+                            }
+                            let confirmacao = false; //inicializa como falso
+                            //verifica se o email está na lista de funcionários
+                            for (let funcionario of listaFuncionarios) {
+                                if (funcionario.email === emailCliente) {
+                                    console.log('Este email ja esta cadastrado como funcionario.');
+                                    confirmacao = true;
+                                    break; // Sai do loop de funcionários
                                 }
-                                else {
-                                    cliente.email = novoEmail;
-                                    confirmacao = true
+                            }
+                            //verifica se o email está na lista de clientes
+                            if (confirmacao == false) {
+                                for (let cliente of listaClientes) {
+                                    if (cliente.email === cpfCliente) {
+                                        console.log('Este email ja esta cadastrado como cliente.');
+                                        confirmacao = true;
+                                        break; //sai do loop de clientes
+                                    }
                                 }
+                            }
+                            //se o e-mail não está cadastrado, sai do loop
+                            if (confirmacao == false) { 
+                                cliente.email = emailCliente;
+                                break;
                             }
                         } 
                     }
@@ -322,9 +424,17 @@ class Sistema {
                 while (true) { //mesma linha de raciocinio para o bloco de codigos de alteracao de nome, mas nesse caso para a alteracao da senha
                     let escolha = input.question(`Deseja alterar a Senha? (s/n): `);
                     if (escolha == 's') {
-
-                        let novaSenha = input.question('Digite a senha: ') 
-                        cliente.senha = novaSenha;
+                        while (true) { //loop para garantir que o usuário digite uma senha com pelo menos 6 dígitos
+                            var senhaCliente = input.question('Digite a sua senha: ');
+                            //verifica se a senha tem pelo menos 6 dígitos
+                            if (senhaCliente.length < 6) {
+                                console.log('A senha deve ter pelo menos 6 digitos.');
+                                continue; //pede a senha novamente
+                            } 
+                            //se a senha eh valida, substitui e sai do loop
+                            cliente.senha = senhaCliente;
+                            break;
+                        }
                         break
                     }
                     if (escolha != 's' && escolha != 'n') {
@@ -332,14 +442,47 @@ class Sistema {
                         continue
                     } 
                     break
-                } 
-                while (true) { //mesma linha de raciocinio para o bloco de codigos de alteracao de nome, mas nesse caso para a alteracao da data de nascimento
+                }
+                while (true) { //loop para fazer com que o usuario escolha uma opcao correta
                     let escolha = input.question(`Deseja alterar a Data de Nascimento? A atual eh ${cliente.dataNascimento} (s/n): `);
-                    if (escolha == 's') {
+                    if (escolha == 's') { 
 
-                        let novaData = input.question('Digite a senha: ') 
-                        cliente.dataNascimento = novaData;
-                        break
+                        function validarData(data) {
+                            //expressao regular para verificar o formato DD/MM/YYYY
+                            let regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+                            if (!regex.test(data)) {
+                                return false; //formato invalido
+                            }
+                            //divide a data em dia, mes e ano
+                            let [dia, mes, ano] = data.split('/').map(Number);
+                            //verifica o ano
+                            if (ano >= 2024) {
+                                return false; //ano invalido
+                            }
+                            //verifica o mes
+                            if (mes < 1 || mes > 12) {
+                                return false; //mes invalido
+                            }
+                            // Verifica o dia
+                            if (dia < 1 || dia > 31) {
+                                return false; //dia invalido
+                            }
+                            //verifica se o dia eh valido para o mes especifico
+                            let diasNoMes = [31, (ano % 4 === 0 && (ano % 100 !== 0 || ano % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+                            if (dia > diasNoMes[mes - 1]) {
+                                return false; // Dia inválido para o mês
+                            }
+                            return true; //data valida
+                        }
+                        while (true) { // Loop para garantir que o usuário digite uma data de nascimento válida
+                            var dataNascimento = input.question('Digite a sua data de nascimento (DD/MM/YYYY): ');
+                            if (validarData(dataNascimento)) {
+                                cliente.dataNascimento = dataNascimento;
+                                break; //sai do loop e substitui se a data for valida
+                            } else {
+                                console.log('Data invalida. Certifique-se de usar o formato DD/MM/YYYY e que a data seja válida.');
+                            }
+                        }
                     }
                     if (escolha != 's' && escolha != 'n') {
                         console.log('Digite uma opcao valida\n')
@@ -371,13 +514,13 @@ class Sistema {
             //verifica se o nome digitado esta na lista, se estiver, entra no if e o loop eh quebrado
             for (let i = 0; i < listaProdutos.length; i++) {
                 if (listaProdutos[i].nome == escolhaProduto) {
-                    console.log('Produto encontrado\n')
+                    console.log('Produto encontrado.\n')
                     confirmacaoAlteracao = true
                     break
                 }
             }
             if (confirmacaoAlteracao == false){ //se nao estiver na lista, pede para o usuario digitar um outro produto
-                console.log('Produto nao foi encontrado, digite novamente')
+                console.log('Produto nao foi encontrado, digite novamente.')
             }
         }
         //quando o loop quebrar, entra no for, que procura onde esta o produto
